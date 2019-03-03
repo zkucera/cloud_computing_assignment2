@@ -66,7 +66,7 @@ function requestVM(){
     });
     if (x)
     addVM({
-        id:"nud",
+        id:"003",
         owner:"zach",
         name: document.getElementById('name').value,
         config:{
@@ -84,8 +84,18 @@ function addVM(vm){
         var storage = vm.config.storage
         var rate = vm.config.rate
         var name = vm.name
+        var id = vm.id
         var node = document.createElement('div');
-        node.innerHTML = '<label>Name: ' + name + '</label><br><label>RAM: ' + ram + ' GB</label><br><label>Storage: ' + storage + ' GB</label><br><label>Cores: '+ cores + '</label><br><label>Rate: ' + rate + 'cents/minute</label><br><button>Upgrade</button><button>Downgrade</button><br><br>';       
+        node.innerHTML = '<label>Name: ' + name + '</label><br><label>RAM: '
+        + ram + ' GB</label><br><label>Storage: ' 
+        + storage + ' GB</label><br><label>Cores: '
+        + cores + '</label><br><label>Rate: ' 
+        + rate + 'cents/minute</label><br><button onclick = "upgrade(' 
+        + id + ')">Upgrade</button><button onclick = "downgrade('
+        + id + ')">Downgrade</button><br><button onclick = "remove('
+        + id + ')">Remove</button><br><button onclick = "startVM('
+        + id + ')">Start</button><button onclick = "stopVM('
+        + id + ')">Stop</button><br><br>';       
         document.getElementById('container').appendChild(node);
 }
 
@@ -93,4 +103,24 @@ function onLoad(){
     for (i = 0; i<vms.length; i++){
         addVM(vms[i])
     }
-}   
+}
+
+function upgrade(id){
+    console.log("Upgrading VM:" + id)
+}
+
+function downgrade(id){
+    console.log("Downgrading VM: " + id)
+}
+
+function remove(id){
+    console.log("Removing VM:" + id)
+}
+
+function startVM(id){
+    console.log("Starting VM: " + id)
+}
+
+function stopVM(id){
+    console.log("Stopping VM: " + id)
+}

@@ -2,7 +2,7 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var vm = new Schema({
-    id: String,
+    id: Number,
     owner: String,
     name: String,
     config:{
