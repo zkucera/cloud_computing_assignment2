@@ -4,12 +4,12 @@ var Schema       = mongoose.Schema;
 var vm = new Schema({
     id: String,
     owner: String,
+    name: String,
     config:{
-        owner: String,
-        cores: number,
-        RAM: number, // in GB
-        storage: number, // in GB
-        rate:number // in c/min
+        cores: Number,
+        RAM: Number, // in GB
+        storage: Number, // in GB
+        rate:Number // in c/min
     }
 
 });

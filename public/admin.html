@@ -1,25 +1,34 @@
 <html>
     <script src="admin.js"></script>
-    <body>
-        <h1>
-            Welcome to the admin screen
-        </h1>
-        <label>
-            Configuration:
-        </label>
-        <select id = "config" onchange="updateConfig()">
-            <option value="" disabled selected>Select your option</option>
-            <option value="Basic">Basic</option>
-            <option value="Large">Large</option>
-            <option value="Ultra">Ultra</option>
-        </select><br>
-        <label id = "cores">Number of Cores: 
-        </label><br>
-        <label id = "RAM"> RAM: 
-        </label><br>
-        <label id = "storage"> Storage Space:
-        </label><br>
-        <label id = "rate"> Rate:
-        </label><br>
+    <body onload = "onLoad()">
+        <h2>
+            Request a New Virtual Machine
+        </h2>
+        <label>VM Name:</label>
+        <input id = "name"></input><br>
+            <label>
+                Configuration:
+            </label>
+            <select id = "config" onchange="updateConfig()">
+                <option value="" disabled selected>Select your option</option>
+                <option value="Basic">Basic</option>
+                <option value="Large">Large</option>
+                <option value="Ultra">Ultra</option>
+            </select><br>
+            <label id = "cores">Number of Cores: 
+            </label><br>
+            <label id = "RAM"> RAM: 
+            </label><br>
+            <label id = "storage"> Storage Space:
+            </label><br>
+            <label id = "rate"> Rate:
+            </label><br>
+            <button onclick="requestVM()">Submit Request</button>
+        <h2>
+            Your Virtual Machines
+        </h2>    
+        <div id = "container">
+
+        </div>
     </body>
 </html>

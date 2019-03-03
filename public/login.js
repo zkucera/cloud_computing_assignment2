@@ -12,6 +12,6 @@
     else{//if its incorrect
       document.getElementById("pw").value = ""
       document.getElementById("un").value = ""
-      document.getElementById("demo").innerText = "Try again!"
+      document.getElementById("Error").innerText = "Invalid Credentials!"
     }
   }
