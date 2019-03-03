@@ -1,13 +1,15 @@
 <html>
-    <script src="./login.js"></script>
+
+    <script src="./register.js"></script>
     <body>
         <h1>
-            Please Login Below
+            Please create an account below
         </h1>
         <form>
             Username: <input type="text" id="un"><br>
-            Password: <input type="text" id="pw"><br>
-            <input type="button" value="Login" onclick="loginSubmit()">
+            Password: <input type="password" id="pw"><br>
+            Confirm Password:<input type="password" id="pwc">
+            <input type="button" value="Register" onclick="registerSubmit()">
         </form>
         <p id="Error" style = "color: red"></p>
     </body>

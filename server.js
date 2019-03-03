@@ -10,7 +10,11 @@ var bodyParser = require('body-parser');
 var url = require('url')
 var fs = require('fs')
 
-var mongoose = require('mongodb')
+var router = express.Router();
+var User = require('./models/user')
+var configDB = require('./configDB');
+
+var mongoose = require('mongoose')
 
 var address = "127.0.0.1"
 
@@ -23,6 +27,114 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;        // set our port
 // ROUTES FOR OUR API
 // =============================================================================
+//Route for registering users
+router.route('/register')
+    .post((req, res) => {
+        if(!req.body.username){
+            res.json({message: 'You must give a username', success: 'false'});
+        }
+        else if(!req.body.password){
+            res.json({message: 'You must give a password', success: 'false'});
+        }
+        else{
+            var user = new User({
+                username: req.body.username,
+                password: req.body.password
+            })
+            user.save((err) => {
+                if (err) {
+                    if (err.code === 11000) {
+                     res.json({ success: false, message: 'Username already exists' }); // Return error
+                    } 
+                    else {
+                        if(err.errors){
+                            if(err.errors.username){
+                                res.json({ message: err.errors.username.message, success: false});
+                            }
+                            else if(err.errors.password){
+                                res.json({ message: err.errors.password.message, success: false});
+                            }
+                            else{
+                                res.json({ message: 'Could not save the user', success: false});
+                            }
+                        }
+                    }
+                }
+                else{
+                    res.json({ message: 'Account successfully registered', success: true});
+                }
+            })
+        }
+    })
+
+    .get((req, res) => {
+        User.find((err, register) => {
+            if (err){
+                res.json({ message: err, success: false});
+            }
+            res.json(register);
+        });
+    });
+
+//route for modifying registered users    
+router.route('/register/:user_id')
+
+        .put((req, res)=> {
+        User.findById(req.params.user_id, (err, user)=> {
+            if (err){
+                res.json(err);
+            }
+            user.name = req.body.name;
+            user.save(function(err) {
+                if (err){
+                    res.json(err);
+                }
+            res.json({ message: 'User updated!' });    
+            });
+        });
+    })
+
+    .delete((req, res) => {
+        User.remove({
+            _id: req.params.user_id
+        }, (err, user) => {
+            if (err){
+                res.send(err);
+            }
+            res.json({ message: 'Successfully deleted' });
+        });
+    });
+
+//route for login component    
+router.route('/login')
+
+    .post((req,res) =>{
+        if(!req.body.username){
+            res.json({ message: 'You must enter a username', success: false});
+        }
+        else if(!req.body.password){
+            res.json({ message: 'You must enter a password', success: false});
+        }
+        else{
+            User.findOne({username: req.body.username.toLowerCase()}, (err,user) => {
+                if(err){
+                    res.json({ message: err, success: false});
+                }
+                else if(!user){
+                    res.json({ message: "Username not found", success: false});
+                }
+                else{
+                    if(!user.comparePassword(req.body.password)){
+                        res.json({ message: "Wrong password", success: false});
+                    }
+                    else{
+                        var token = jwt.sign({userID: user._id, expiresIn: '12h'}, configDB.secret);
+                        res.json({ message: "Successful login", success: true, token: token, user: {username: user.username}});
+                    }
+                }
+            })
+        }
+    });
 
 // middleware to use for all requests
 app.use(function(req, res, next) {
@@ -43,6 +155,18 @@ app.get('/', function(req, res) {
         return res.end();
     });
 });
+
+app.get('/signup', function(req, res){ 
+    fs.readFile("public/signup.html", function(err, data) {
+        if (err) {
+            res.writeHead(404, {'Content-Type': 'text/html'});
+            return res.end("404 Not Found");
+        }  
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(data);
+        return res.end();
+    });
+})
   
 
 app.get('/admin', function(req, res) { 
@@ -60,9 +184,21 @@ app.get('/admin', function(req, res) {
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/', express.static(__dirname + '/public'));
+app.use('/api',router);
+
 
 
 // START THE SERVER
 // =============================================================================
+//Set up default mongoose connection
+mongoose.connect(configDB.uri, { useNewUrlParser: true });
+// Get Mongoose to use the global promise library
+mongoose.Promise = global.Promise;
+//Get the default connection
+var db = mongoose.connection;
+
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 app.listen(port,address);
 console.log('Magic happens on  ' + address + ":" + port);
