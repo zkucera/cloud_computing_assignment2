@@ -12,7 +12,8 @@ var fs = require('fs')
 var cors = require('cors')
 app.use(cors());
 var router = express.Router();
-var User = require('./models/user')
+var User = require('./models/user');
+var Vm = require('./models/vm');
 var configDB = require('./configDB');
 
 var mongoose = require('mongoose')
@@ -136,6 +137,45 @@ router.route('/login')
             })
         }
     });
+
+    //Route for creating VM's
+router.route('/vm') 
+.post((req,res) =>{
+    var vm = new Vm({
+        // Contain the user ID owner: userID
+        name : req.body.name,
+        config : req.body.config           
+    })
+    vm.save((err,res) =>{
+        if (err){
+            console.log("VM NOT CREATED: " + err)
+        }
+        else{
+            console.log("VM CREATED: " + res.name + "," + res.config.name)
+        }
+    })
+    
+})
+
+.get((req, res)=>{
+    Vm.find(function(err,vms){
+        if (err){
+            res.send(err)
+        }
+        else{
+            res.json(vms);
+        }
+    
+    })
+})
+.delete((req,res) =>{
+    Vm.remove(function(err, vm) {
+        if (err)
+            res.send(err);
+
+        res.json({ message: 'VMS REMOVED' });
+    });
+})
 
 //TODO: Get rid of this, just testing
 router.route('/test') 

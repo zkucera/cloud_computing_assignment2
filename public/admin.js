@@ -23,6 +23,8 @@ var options = [{
     
 },];
 
+var url= 'http://localhost:8080/api/vm'
+
 function updateConfig(){
     var x = document.getElementById("config").value;
     
@@ -38,44 +40,28 @@ function updateConfig(){
     }
 }
 
-
-var vms = [{id: "001",
-    owner: "zach",
-    name: "VM1",
-    config:{
-        cores: 2,
-        RAM: 2, // in GB
-        storage: 2, // in GB
-        rate:2 // in c/min
-    }},{
-    id: "002",
-    owner: "zach",
-    name:"VM2",
-    config:{
-        cores: 2,
-        RAM: 2, // in GB
-        storage: 2, // in GB
-        rate:2 // in c/min
-    }},]
-
 function requestVM(){
     var x = document.getElementById("config").value;
     
     var selected  = options.find(element => {
         return element.name == x
     });
-    if (x)
-    addVM({
-        id:"003",
-        owner:"zach",
-        name: document.getElementById('name').value,
-        config:{
-            cores: selected.cores,
-            RAM: selected.RAM,
-            storage:selected.storage,
-            rate: selected.rate
+    if (x){
+        vm ={ 
+            owner:"zach", //TODO: Going to be the username of the logged in user
+            name: document.getElementById('name').value,
+            config:{
+                name: selected.name,
+                cores: selected.cores,
+                RAM: selected.RAM,
+                storage:selected.storage,
+                rate: selected.rate
+            }
         }
-    })
+        addVM(vm); //Add the vm to the list on screen
+        createVM(vm);//Create the vm
+    }
+    
 }
 
 function addVM(vm){
@@ -97,12 +83,21 @@ function addVM(vm){
         + id + ')">Start</button><button onclick = "stopVM('
         + id + ')">Stop</button><br><br>';       
         document.getElementById('container').appendChild(node);
+
+        
+}
+
+function createVM(vm){
+    fetch(url, { //Send the creation request
+        method: 'post',
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
+        body: JSON.stringify(vm)})
 }
 
 function onLoad(){
-    for (i = 0; i<vms.length; i++){
-        addVM(vms[i])
-    }
+    //for each vm the user owns (i = 0; i<vms.length; i++){
+    //    addVM(vms[i])
+    //}
 }
 
 function upgrade(id){

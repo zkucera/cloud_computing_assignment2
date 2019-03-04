@@ -1,11 +1,11 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
-var vm = new Schema({
-    id: Number,
+var VmSchema= new Schema({
     owner: String,
     name: String,
     config:{
+        name: String,
         cores: Number,
         RAM: Number, // in GB
         storage: Number, // in GB
@@ -14,4 +14,4 @@ var vm = new Schema({
 
 });
 
-module.exports = mongoose.model('VM', vm);
+module.exports = mongoose.model('Vm', VmSchema);
