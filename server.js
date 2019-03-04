@@ -9,7 +9,8 @@ var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var url = require('url')
 var fs = require('fs')
-
+var cors = require('cors')
+app.use(cors());
 var router = express.Router();
 var User = require('./models/user')
 var configDB = require('./configDB');
@@ -136,6 +137,16 @@ router.route('/login')
         }
     });
 
+//TODO: Get rid of this, just testing
+router.route('/test') 
+    .get((req, res)=>{
+        User.find(function(err,users){
+            if (err) res.send(err)
+
+            res.json(users);
+        })
+    })
+
 // middleware to use for all requests
 app.use(function(req, res, next) {
     // do logging
@@ -185,6 +196,7 @@ app.get('/admin', function(req, res) {
 // all of our routes will be prefixed with /api
 app.use('/', express.static(__dirname + '/public'));
 app.use('/api',router);
+
 
 
 
