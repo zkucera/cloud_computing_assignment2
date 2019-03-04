@@ -11,6 +11,13 @@ var url = require('url')
 var fs = require('fs')
 var cors = require('cors')
 app.use(cors());
+
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    next();
+});
+
 var router = express.Router();
 var User = require('./models/user');
 var Vm = require('./models/vm');
@@ -138,9 +145,9 @@ router.route('/login')
         }
     });
 
-    //Route for creating VM's
+//Route for creating VM's
 router.route('/vm') 
-.post((req,res) =>{
+.post((req,response) =>{
     var vm = new Vm({
         // Contain the user ID owner: userID
         name : req.body.name,
@@ -150,8 +157,10 @@ router.route('/vm')
         if (err){
             console.log("VM NOT CREATED: " + err)
         }
-        else{
-            console.log("VM CREATED: " + res.name + "," + res.config.name)
+        else{  
+            console.log("VM CREATED: " + res._id + "," + res.config.name)
+            response.send(res._id)
+            
         }
     })
     
@@ -176,6 +185,49 @@ router.route('/vm')
         res.json({ message: 'VMS REMOVED' });
     });
 })
+
+//Route for editing VMs
+router.route('/vm/:vm_id')
+        .put((req, res)=> {
+        Vm.findById(req.params.vm_id, (err, vm)=> {
+            if (err){
+                res.json(err);
+            }
+            console.log(req.body)
+            vm.name = req.body.name;
+            vm.config = req.body.config;
+            vm.save(function(err) {
+                if (err){
+                    res.json(err);
+                }
+            res.json({ message: 'User updated!' });    
+            });
+        });
+    })
+
+    .get((req,res)=>{
+        Vm.findById(req.params.vm_id, (err, vm)=>{
+            if (err){
+                res.json(err)
+            }
+            else{
+                res.json(vm)
+            }
+        })
+    })
+
+    .delete((req, res) => {
+        console.log(req.params.vm_id)
+        Vm.remove({
+            _id: req.params.vm_id
+        }, (err, vm) => {
+            if (err){
+                res.send(err);
+            }
+            else{res.json({ message: 'VM Successfully deleted' });}
+
+        });
+    });
 
 //TODO: Get rid of this, just testing
 router.route('/test') 

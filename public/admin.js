@@ -58,27 +58,27 @@ function requestVM(){
                 rate: selected.rate
             }
         }
-        addVM(vm); //Add the vm to the list on screen
-        createVM(vm);//Create the vm
+        createVM(vm);   
+
+        
     }
     
 }
 
-function addVM(vm){
+function addVM(vm,id){
         var cores = vm.config.cores
         var ram = vm.config.RAM
         var storage = vm.config.storage
         var rate = vm.config.rate
         var name = vm.name
-        var id = vm.id
         var node = document.createElement('div');
         node.innerHTML = '<label>Name: ' + name + '</label><br><label>RAM: '
         + ram + ' GB</label><br><label>Storage: ' 
         + storage + ' GB</label><br><label>Cores: '
         + cores + '</label><br><label>Rate: ' 
         + rate + 'cents/minute</label><br><button onclick = "upgrade(' 
-        + id + ')">Upgrade</button><button onclick = "downgrade('
-        + id + ')">Downgrade</button><br><button onclick = "remove('
+        + id + ",\'" + vm.config.name + '\')">Upgrade</button><button onclick = "downgrade('
+        + id + "," + vm.config.name + ')">Downgrade</button><br><button onclick = "remove('
         + id + ')">Remove</button><br><button onclick = "startVM('
         + id + ')">Start</button><button onclick = "stopVM('
         + id + ')">Stop</button><br><br>';       
@@ -87,12 +87,19 @@ function addVM(vm){
         
 }
 
-function createVM(vm){
-    fetch(url, { //Send the creation request
+function  createVM(vm){
+        fetch(url, { //Send the creation request
         method: 'post',
+        mode: "cors",
         headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
-        body: JSON.stringify(vm)})
-}
+        body: JSON.stringify(vm)}).then(data =>{
+            return data.json()
+        })
+        .then(ID =>{
+            console.log(ID)
+            addVM(vm,ID)
+        })
+    }
 
 function onLoad(){
     //for each vm the user owns (i = 0; i<vms.length; i++){
@@ -100,16 +107,36 @@ function onLoad(){
     //}
 }
 
-function upgrade(id){
-    console.log("Upgrading VM:" + id)
+function upgrade(id, configName){
+    var temp  = options.findIndex(element => {
+        return element.name == configName
+    });
+    if (temp == options.length){
+        console.log("Already at the maximum upgrade!")
+    }
+    else{
+        temp = options[temp + 1];//Get the config that we need to upgrade to
+        //TODO: When we have the id of the VM, edit it with the new config
+    }
 }
 
-function downgrade(id){
-    console.log("Downgrading VM: " + id)
+function downgrade(id, configName){
+    var temp  = options.findIndex(element => {
+        return element.name == configName
+    });
+    if (temp == 0){
+        console.log("Already at the minimum upgrade")
+    }
+    else{
+        temp = options[temp - 1];//Get the config that we need to downgrade to
+        //TODO: When we have the id of the VM, edit it with the new config
+    }
 }
 
 function remove(id){
-    console.log("Removing VM:" + id)
+    fetch(url + "/" + id, { //Remove the VM
+        method: 'delete',
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url}})
 }
 
 function startVM(id){
