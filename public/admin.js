@@ -24,6 +24,10 @@ var options = [{
 },];
 
 var url= 'http://localhost:8080/api/vm'
+var byUserUrl = 'http://localhost:8080/api/vmByUser'
+
+var userVMs; //TODO: Going to contain the vm's of the currently logged in user
+var userID = "5c7c568810074e1884b4bde5"; //TODO: Going to be the ID of the user that is currently logged in
 
 function updateConfig(){
     var x = document.getElementById("config").value;
@@ -46,9 +50,9 @@ function requestVM(){
     var selected  = options.find(element => {
         return element.name == x
     });
-    if (x){
-        vm ={ 
-            owner:"zach", //TODO: Going to be the username of the logged in user
+    if (x){ //If we have a name
+        vm ={ //Create the VM object
+            owner:userID, //TODO: Going to be the username of the logged in user
             name: document.getElementById('name').value,
             config:{
                 name: selected.name,
@@ -58,14 +62,13 @@ function requestVM(){
                 rate: selected.rate
             }
         }
-        createVM(vm);   
-
-        
+        createVM(vm);         
     }
     
 }
 
-function addVM(vm,id){
+function addVM(vm){
+    console.log(vm)
         var cores = vm.config.cores
         var ram = vm.config.RAM
         var storage = vm.config.storage
@@ -77,12 +80,13 @@ function addVM(vm,id){
         + storage + ' GB</label><br><label>Cores: '
         + cores + '</label><br><label>Rate: ' 
         + rate + 'cents/minute</label><br><button onclick = "upgrade(' 
-        + id + ",\'" + vm.config.name + '\')">Upgrade</button><button onclick = "downgrade('
-        + id + "," + vm.config.name + ')">Downgrade</button><br><button onclick = "remove('
-        + id + ')">Remove</button><br><button onclick = "startVM('
-        + id + ')">Start</button><button onclick = "stopVM('
-        + id + ')">Stop</button><br><br>';       
+        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Upgrade</button><button onclick = "downgrade('
+        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Downgrade</button><br><button onclick = "remove('
+        + "\'" + vm._id + '\')">Remove</button><br><button onclick = "startVM('
+        + "\'" + vm._id + '\')">Start</button><button onclick = "stopVM('
+        + "\'" + vm._id + '\')">Stop</button><br><br>';       
         document.getElementById('container').appendChild(node);
+        
 
         
 }
@@ -96,26 +100,61 @@ function  createVM(vm){
             return data.json()
         })
         .then(ID =>{
-            console.log(ID)
-            addVM(vm,ID)
+            vm = {name: vm.name, _id: ID, config: vm.config}
+            console.log("CREATE VM NEW VM: " + vm)
+            addVM(vm)
         })
     }
 
 function onLoad(){
-    //for each vm the user owns (i = 0; i<vms.length; i++){
-    //    addVM(vms[i])
-    //}
+    var temp = document.getElementById('container').children.length
+    for (i = 0; i < temp; i++){
+        console.log("Removing child number:" + i)
+        document.getElementById('container').children[0].remove();
+    }
+    fetch(byUserUrl + "/" + userID, { //Get the vms of the current user
+        method: 'get',
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
+        }).then(data =>{
+            return data.json()
+        })
+        .then(vms =>{
+            userVMs = vms //save their vms
+            for (i = 0; i<userVMs.length; i++){ //For each one, display its info
+                addVM(userVMs[i])
+            }
+        })
+
+    
 }
 
 function upgrade(id, configName){
     var temp  = options.findIndex(element => {
         return element.name == configName
     });
-    if (temp == options.length){
+    console.log("Current Config: " + temp)
+    console.log("VM ID:" + id)
+    if (temp == options.length - 1){
         console.log("Already at the maximum upgrade!")
     }
     else{
         temp = options[temp + 1];//Get the config that we need to upgrade to
+        console.log("New Config: " + temp.name)
+        fetch(url + "/" + id, { //Send the creation request
+            method: 'put',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
+            body: JSON.stringify(temp)}).then(data =>{
+                return data.json()
+            })
+            .then(stuff =>{
+                console.log(stuff)
+                onload()
+            })
+
+        
+
         //TODO: When we have the id of the VM, edit it with the new config
     }
 }
@@ -129,7 +168,17 @@ function downgrade(id, configName){
     }
     else{
         temp = options[temp - 1];//Get the config that we need to downgrade to
-        //TODO: When we have the id of the VM, edit it with the new config
+        fetch(url + "/" + id, { //Send the creation request
+            method: 'put',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
+            body: JSON.stringify(temp)}).then(data =>{
+                return data.json()
+            })
+            .then(stuff =>{
+                console.log(stuff)
+                onload()
+            })
     }
 }
 
@@ -137,7 +186,8 @@ function remove(id){
     fetch(url + "/" + id, { //Remove the VM
         method: 'delete',
         headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url}})
-}
+        onload()
+    }
 
 function startVM(id){
     console.log("Starting VM: " + id)

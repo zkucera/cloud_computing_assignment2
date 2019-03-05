@@ -151,6 +151,7 @@ router.route('/vm')
     var vm = new Vm({
         // Contain the user ID owner: userID
         name : req.body.name,
+        owner : req.body.owner,
         config : req.body.config           
     })
     vm.save((err,res) =>{
@@ -194,8 +195,7 @@ router.route('/vm/:vm_id')
                 res.json(err);
             }
             console.log(req.body)
-            vm.name = req.body.name;
-            vm.config = req.body.config;
+            vm.config = req.body;
             vm.save(function(err) {
                 if (err){
                     res.json(err);
@@ -229,15 +229,22 @@ router.route('/vm/:vm_id')
         });
     });
 
-//TODO: Get rid of this, just testing
-router.route('/test') 
-    .get((req, res)=>{
-        User.find(function(err,users){
-            if (err) res.send(err)
-
-            res.json(users);
-        })
+router.route('/vmByUser/:user_id') //Used to get vm's by owner id
+.get((req,res) =>{
+    Vm.find({owner: req.params.user_id},(err,vms) =>{
+        if(err){
+            res.json({ message: err, success: false});
+        }
+        else if(!vms){
+            res.json({ message: "Username not found", success: false});
+        }
+        else{
+            res.json(vms)
+        }
     })
+})
+
+
 
 // middleware to use for all requests
 app.use(function(req, res, next) {
