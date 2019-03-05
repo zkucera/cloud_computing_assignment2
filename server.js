@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var url = require('url')
 var fs = require('fs')
 var cors = require('cors')
+var jwt = require('jsonwebtoken');
 app.use(cors());
 
 app.use(function (req, res, next) {
