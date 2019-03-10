@@ -11,14 +11,14 @@ function RegisterSubmit(){
       method: 'post',
       headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
       body: JSON.stringify({username : un, password : pw})})
-      .then(x =>{
+      .then(x =>{ //If the registration was a success
         console.log("Registration Successful!: " + x.statusText)
         location.assign("./")
-      }).catch(error =>{
+      }).catch(error =>{ //If it errored.
         console.log("ERROR! Register did not go through!: " + error)
       })
   }
-  else{//if its incorrect
+  else{//if the passwords do not match
     document.getElementById("pw").value = ""
     document.getElementById("pwc").value = ""
     document.getElementById("un").value = ""

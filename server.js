@@ -148,7 +148,7 @@ router.route('/login')
 
 //Route for creating VM's
 router.route('/vm') 
-.post((req,response) =>{
+.post((req,response) =>{ //Adds a VM to the DB
     var vm = new Vm({
         // Contain the user ID owner: userID
         name : req.body.name,
@@ -168,7 +168,7 @@ router.route('/vm')
     
 })
 
-.get((req, res)=>{
+.get((req, res)=>{ //Returns every VM in the DB
     Vm.find(function(err,vms){
         if (err){
             res.send(err)
@@ -179,7 +179,7 @@ router.route('/vm')
     
     })
 })
-.delete((req,res) =>{
+.delete((req,res) =>{ //Removes every VM in the DB
     Vm.remove(function(err, vm) {
         if (err)
             res.send(err);
@@ -250,7 +250,6 @@ router.route('/vmByUser/:user_id') //Used to get vm's by owner id
 // middleware to use for all requests
 app.use(function(req, res, next) {
     // do logging
-    console.log('Something is happening.');
     next(); // make sure we go to the next routes and don't stop here
 })
 
