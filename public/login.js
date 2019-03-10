@@ -13,7 +13,7 @@
       .then(function(res){
         return res.json()
         .then(function(res){
-          console.log(res.json());
+          console.log(res);
         })
       })
       

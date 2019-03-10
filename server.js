@@ -139,7 +139,7 @@ router.route('/login')
                     }
                     else{
                         var token = jwt.sign({userID: user._id, expiresIn: '12h'}, configDB.secret);
-                        res.json({ message: "Successful login", success: true, token: token, user: {username: user.username}});
+                        res.json({ message: "Successful login", success: true, token: token, user: {id: user._id}});
                     }
                 }
             })
