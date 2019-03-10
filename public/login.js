@@ -1,5 +1,12 @@
   var un,pw
   var url = 'http://localhost:8080/api/login';
+
+  function onload(){
+    if (window.localStorage.getItem("userID")){
+      location.assign('./admin')
+    }
+  }
+
   function loginSubmit(){
 
     un = document.getElementById("un").value //Get the login info entered
@@ -13,15 +20,15 @@
       .then(function(res){
         return res.json()
         .then(function(res){
-          console.log(res);
+          window.localStorage.setItem("userID" , res.user.id)
+          location.assign("./admin")
         })
+      }).catch(err =>{
+        //if its incorrect
+        document.getElementById("pw").value = ""
+        document.getElementById("un").value = ""
+        document.getElementById("Error").innerText = "Invalid Credentials!"
       })
       
-      //location.assign("./admin")
-    
-    //if its incorrect
-      document.getElementById("pw").value = ""
-      document.getElementById("un").value = ""
-      document.getElementById("Error").innerText = "Invalid Credentials!"
-    
+   
   }

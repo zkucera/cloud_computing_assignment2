@@ -26,8 +26,8 @@ var options = [{
 var url= 'http://localhost:8080/api/vm'
 var byUserUrl = 'http://localhost:8080/api/vmByUser'
 
-var userVMs; //TODO: Going to contain the vm's of the currently logged in user
-var userID = "5c7c568810074e1884b4bde5"; //TODO: Going to be the ID of the user that is currently logged in
+var userVMs; 
+var userID = localStorage.getItem("userID"); //Get the username from the webtoken
 
 function updateConfig(){
     var x = document.getElementById("config").value;
@@ -52,7 +52,7 @@ function requestVM(){
     });
     if (x){ //If we have a name
         vm ={ //Create the VM object
-            owner:userID, //TODO: Going to be the username of the logged in user
+            owner:userID, 
             name: document.getElementById('name').value,
             config:{
                 name: selected.name,
@@ -155,7 +155,6 @@ function upgrade(id, configName){
 
         
 
-        //TODO: When we have the id of the VM, edit it with the new config
     }
 }
 
@@ -195,4 +194,9 @@ function startVM(id){
 
 function stopVM(id){
     console.log("Stopping VM: " + id)
+}
+
+function logout(){
+    window.localStorage.removeItem("userID")
+    location.assign("./")
 }

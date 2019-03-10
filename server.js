@@ -54,7 +54,7 @@ router.route('/register')
             user.save((err) => {
                 if (err) {
                     if (err.code === 11000) {
-                     res.json({ success: false, message: 'Username already exists' }); // Return error
+                    res.json({ success: false, message: 'Username already exists' }); // Return error
                     } 
                     else {
                         if(err.errors){

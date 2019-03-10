@@ -13,6 +13,7 @@ function RegisterSubmit(){
       body: JSON.stringify({username : un, password : pw})})
       .then(x =>{
         console.log("Registration Successful!: " + x.statusText)
+        location.assign("./")
       }).catch(error =>{
         console.log("ERROR! Register did not go through!: " + error)
       })
@@ -21,6 +22,6 @@ function RegisterSubmit(){
     document.getElementById("pw").value = ""
     document.getElementById("pwc").value = ""
     document.getElementById("un").value = ""
-    document.getElementById("Error").innerText = "Invalid Credentials!"
+    document.getElementById("Error").innerText = "You must enter matching passwords!"
   }
 }
