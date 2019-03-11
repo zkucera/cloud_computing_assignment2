@@ -4,6 +4,7 @@
 // =============================================================================
 
 // call the packages we need
+const fetch = require('node-fetch');
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
@@ -28,6 +29,8 @@ var configDB = require('./configDB');
 var mongoose = require('mongoose')
 
 var address = "127.0.0.1"
+
+var vimUrl = 'http://localhost:7000/api/vmUsage';
 
 
 // configure app to use bodyParser()
@@ -249,23 +252,24 @@ router.route('/vmByUser/:user_id') //Used to get vm's by owner id
 //VM Usage
 router.route('/vmUsage/:user_id/:vm_id')
     .post((req, response) => { //Adds a VM Usage event to the DB
-        var vmUsage = new VmUsage({
+        var vmUsage = new VmUsage({})
 
-        user: req.params.user_id,
-        vm: req.params.vm_id,
-        vmType: req.body.vmType,
-        eventType: req.body.eventType,
-        timeStamp: req.body.timeStamp
-    })
-    vmUsage.save((err,res) => {
-        if (err) {
-            console.log("VM USAGE EVENT NOT CREATED: " + err)
-        }
-        else {  
-            console.log("VM USAGE EVENT CREATED: " + res._id)
-            response.send(res._id)   
-        }
-    })
+        //Create VIM event and send to cloud usage monitor
+        fetch(vimUrl + "/" + req.params.user_id + "/" + req.params.vm_id, { //Send the post request
+            method: 'post',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+            body: JSON.stringify({
+                vmType: req.body.vmType,
+                eventType: "VM_Starting",
+                timeStamp: "" + Math.floor(Date.now() / 1000)
+        })}).then(data => {
+            return data.json()
+        })
+        .then(stuff => {
+            onload()//Refresh the list of VMs
+            response.send("Usage event created");
+        })
 })
 
 

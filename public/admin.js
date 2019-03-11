@@ -121,9 +121,22 @@ function upgrade(id, configName){ //Upgrades the vm selected
                 console.log(stuff)
                 onload()//Refresh the list of VM's to include the updated info
             })
-
         
-
+        //Notify vim to create usage event
+        fetch(vimUrl + "/" + userID + "/" + id, { //Send the post request
+            method: 'post',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+            body: JSON.stringify({
+                vmType: configName,
+                eventType: "VM_Scaling",
+                timeStamp: "" + Math.floor(Date.now() / 1000)
+            })}).then(data => {
+                return data.json()
+            })
+            .then(stuff => {
+                onload()//Refresh the list of VMs
+            })
     }
 }
 
@@ -144,6 +157,22 @@ function downgrade(id, configName){//Used to downgrade a vm
                 return data.json()
             })
             .then(stuff =>{
+                onload()//Refresh the list of VMs
+            })
+        
+        //Notify vim to create usage event
+        fetch(vimUrl + "/" + userID + "/" + id, { //Send the post request
+            method: 'post',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+            body: JSON.stringify({
+                vmType: configName,
+                eventType: "VM_Scaling",
+                timeStamp: "" + Math.floor(Date.now() / 1000)
+            })}).then(data => {
+                return data.json()
+            })
+            .then(stuff => {
                 onload()//Refresh the list of VMs
             })
     }
