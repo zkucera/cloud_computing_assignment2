@@ -22,6 +22,7 @@ app.use(function (req, res, next) {
 var router = express.Router();
 var User = require('./models/user');
 var Vm = require('./models/vm');
+var VmUsage = require('./models/vmUsage');
 var configDB = require('./configDB');
 
 var mongoose = require('mongoose')
@@ -245,6 +246,27 @@ router.route('/vmByUser/:user_id') //Used to get vm's by owner id
     })
 })
 
+//VM Usage
+router.route('/vmUsage/:user_id/:vm_id')
+    .post((req, response) => { //Adds a VM Usage event to the DB
+        var vmUsage = new VmUsage({
+
+        user: req.params.user_id,
+        vm: req.params.vm_id,
+        vmType: req.body.vmType,
+        eventType: req.body.eventType,
+        timeStamp: req.body.timeStamp
+    })
+    vmUsage.save((err,res) => {
+        if (err) {
+            console.log("VM USAGE EVENT NOT CREATED: " + err)
+        }
+        else {  
+            console.log("VM USAGE EVENT CREATED: " + res._id)
+            response.send(res._id)   
+        }
+    })
+})
 
 
 // middleware to use for all requests

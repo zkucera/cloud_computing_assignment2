@@ -3,7 +3,7 @@
 
   function onload(){//Called when the page is loaded, if the user has a web token, send them to the landing page
     if (window.localStorage.getItem("userID")){
-      location.assign('./admin')
+      location.assign('./admin.html')
     }
   }
 
@@ -20,7 +20,7 @@
         return res.json()
         .then(function(res){//If the login is a success
           window.localStorage.setItem("userID" , res.user.id) //TODO: Stores the user ID in local storage, probably a horrible way to do this.
-          location.assign("./admin") //Send them to the landing page
+          location.assign("./admin.html") //Send them to the landing page
         })
       }).catch(err =>{ 
         //if its incorrect

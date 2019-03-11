@@ -1,4 +1,5 @@
-var url= 'http://localhost:8080/api/vm'
+var url = 'http://localhost:8080/api/vm'
+var vimUrl = 'http://localhost:8080/api/vmUsage'
 var byUserUrl = 'http://localhost:8080/api/vmByUser'
 
 var userVMs; //The user's vms
@@ -56,7 +57,7 @@ function addVM(vm){ //Adds vm's info to the frontend, gives the user options to 
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Upgrade</button><button onclick = "downgrade('
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Downgrade</button><br><button onclick = "remove('
         + "\'" + vm._id + '\')">Remove</button><br><button onclick = "startVM('
-        + "\'" + vm._id + '\')">Start</button><button onclick = "stopVM('
+        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Start</button><button onclick = "stopVM('
         + "\'" + vm._id + '\')">Stop</button><br><label id = "status' + vm._id + '" style = "color: red"></label><br><br>';       
         document.getElementById('container').appendChild(node);
         
@@ -155,8 +156,23 @@ function remove(id){//Used to remove a vm
         onload()//Refresh the list of VMs
     }
 
-function startVM(id){ //TODO: GOING TO START THE VM
-    console.log("Starting VM: " + id)
+function startVM(id, configName) {
+    console.log(id);
+    console.log(configName);
+    fetch(vimUrl + "/" + userID + "/" + id, { //Send the post request
+        method: 'post',
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+        body: JSON.stringify({
+            vmType: configName,
+            eventType: "VM_Starting",
+            timeStamp: "" + Math.floor(Date.now() / 1000)
+        })}).then(data => {
+            return data.json()
+        })
+        .then(stuff => {
+            onload()//Refresh the list of VMs
+        })
 }
 
 function stopVM(id){ //TODO: GOING TO STOP THE VM
@@ -165,7 +181,7 @@ function stopVM(id){ //TODO: GOING TO STOP THE VM
 
 function logout(){ //Logs the user out
     window.localStorage.removeItem("userID") //Gets rid of the token in local storage
-    location.assign("./")//Send them to the home page
+    location.assign("./login.html")//Send them to the home page
 }
 
 var options = [{ //The different configurations for VM's

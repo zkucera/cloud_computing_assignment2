@@ -13,7 +13,7 @@ function RegisterSubmit(){
       body: JSON.stringify({username : un, password : pw})})
       .then(x =>{ //If the registration was a success
         console.log("Registration Successful!: " + x.statusText)
-        location.assign("./")
+        location.assign("./login.html")
       }).catch(error =>{ //If it errored.
         console.log("ERROR! Register did not go through!: " + error)
       })
