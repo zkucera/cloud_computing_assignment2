@@ -41,7 +41,6 @@ var port = process.env.PORT || 7000;        // set our port
 //VM Usage
 router.route('/vmUsage/:user_id/:vm_id')
     .post((req, response) => { //Adds a VM Usage event to the DB
-        console.log("Yo");
         var vmUsage = new VmUsage({
 
         user: req.params.user_id,

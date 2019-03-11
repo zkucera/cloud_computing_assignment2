@@ -266,10 +266,6 @@ router.route('/vmUsage/:user_id/:vm_id')
         })}).then(data => {
             return data.json()
         })
-        .then(stuff => {
-            onload()//Refresh the list of VMs
-            response.send("Usage event created");
-        })
 })
 
 
