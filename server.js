@@ -261,7 +261,7 @@ router.route('/vmUsage/:user_id/:vm_id')
             headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
             body: JSON.stringify({
                 vmType: req.body.vmType,
-                eventType: "VM_Starting",
+                eventType: req.body.eventType,
                 timeStamp: "" + Math.floor(Date.now() / 1000)
         })}).then(data => {
             return data.json()
