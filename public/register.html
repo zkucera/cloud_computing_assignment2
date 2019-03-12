@@ -1,17 +1,60 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Login</title>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" href=".././styles/css/a.css">
+    </head>
+    <body background="../styles/images/background_clouds.jpeg">
+
+    <div class="page-limiter">
+        <div class="login-container">
+            <div class="login-wrapper">
+                <form class="login-form">
+
+                    <span class="login-form-logo">
+                        <span class="icon"></span>
+                    </span>
+
+                    <span class="login-form-title">Create Account</span>
+
+                    <div class="login-input-wrapper validate-input">
+                        <input class="login-input" type="text" id="un" name="username" placeholder="Username">
+                        <span class="login-input-focus" data-placeholder="&#xf207;"></span>
+                    </div>
+
+                    <div class="login-input-wrapper validate-input">
+                        <input class="login-input" type="password" id="pw" name="password" placeholder="Password">
+                        <span class="login-input-focus" data-placeholder="&#xf191;"></span>
+                    </div>
+
+                    <div class="login-input-wrapper validate-input">
+                        <input class="login-input" type="password" id="pwc" name="passwordc" placeholder="Confirm Password">
+                        <span class="login-input-focus" data-placeholder="&#xf191;"></span>
+                    </div>
+
+                    <div class="login-button-wrapper">
+                        <button class="login-button" type="button" onclick="RegisterSubmit()">Create Account</button>
+                    </div>
+
+                    <div class="text-center create-account-wrapper">
+                        <a class="create-account-link" href="./login.html">Login Instead</a>
+                    </div>
+
+                    <div class="text-center create-account-wrapper">
+                        <p id="Error" style = "color: red"></p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="./register.js"></script>
-    <body>
-        <h1>
-            Please create an account below
-        </h1>
-        <form>
-            Username: <input type="text" id="un"><br>
-            Password: <input type="password" id="pw"><br>
-            Confirm Password:<input type="password" id="pwc"><br>
-            <input type="button" value="Register" onclick="RegisterSubmit()">
-        </form>
-        <a href = "./login.html">Login Instead</a>
-        <p id="Error" style = "color: red"></p>
-    </body>
+
 </html>

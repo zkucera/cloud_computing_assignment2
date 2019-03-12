@@ -11,7 +11,7 @@
     un = document.getElementById("un").value //Get the login info entered
     pw = document.getElementById("pw").value
     un.toLowerCase();
-
+    console.log("yo");
     fetch(url, { //Send the login request
       method: 'post',
       headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
