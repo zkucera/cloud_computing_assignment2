@@ -58,7 +58,7 @@ function addVM(vm){ //Adds vm's info to the frontend, gives the user options to 
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Downgrade</button><br><button onclick = "remove('
         + "\'" + vm._id + '\')">Remove</button><br><button onclick = "startVM('
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Start</button><button onclick = "stopVM('
-        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Stop</button><br><label id = "status' + vm._id + '" style = "color: red"></label><br><br>';       
+        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Stop</button><br><button onclick = "requestVMUsage(' + "\'" + vm._id + '\')">Request VM Usage</button><br><label id = "status' + vm._id + '" style = "color: red"></label><br><br>';       
         document.getElementById('container').appendChild(node);
         
 
@@ -118,7 +118,6 @@ function upgrade(id, configName){ //Upgrades the vm selected
                 return data.json()
             })
             .then(stuff =>{
-                console.log(stuff)
                 onload()//Refresh the list of VM's to include the updated info
             })
         
@@ -213,6 +212,67 @@ function stopVM(id, configName) {
             timeStamp: "" + Math.floor(Date.now() / 1000)
         })}).then(data => {
             return data.json()
+        })
+        .then(stuff => {
+            onload()//Refresh the list of VMs
+        })
+}
+
+function requestVMUsage(id){
+    fetch(vimUrl + "/" + id, { //Send the post request
+        method: 'get',
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+        }).then(data => {
+            data.json().then(d => {
+                num1 = 0
+                num2 = 0
+                total = 0
+                for (var i = 0; d['message'][i] != undefined; i++) {
+                    temp = d['message'][i];
+                    if(id == temp['vm']){
+                        if(temp['eventType'] == "VM_Starting"){
+                            if(num1 == 0){
+                                num1 = temp['timestamp']
+                                initType = temp['vmType']
+                            }
+                        }
+                        if(temp['eventType'] == "VM_Stopping"){
+                            num2 = temp['timestamp']
+                            if(num1 != 0){
+                                if(temp['vmType'] == "Basic"){
+                                    total = total + (5*(num2-num1))
+                                }
+                                if(temp['vmType'] == "Large"){
+                                    total = total + (10*(num2-num1))
+                                }
+                                if(temp['vmType'] == "Ultra"){
+                                    total = total + (15*(num2-num1))
+                                }
+                                console.log(total)
+                                num1 = 0
+                            }
+                        }
+                        if(temp['eventType'] == "VM_Scaling"){
+                            num2 = temp['timestamp']
+                            if(num1 != 0){
+                                if(initType == "Basic"){
+                                    total = total + (5*(num2-num1))
+                                }
+                                if(initType == "Large"){
+                                    total = total + (10*(num2-num1))
+                                }
+                                if(initType == "Ultra"){
+                                    total = total + (15*(num2-num1))
+                                }
+                                num1 = num2
+                                initType = temp['vmType']
+                            }
+                        }
+                    }
+                    
+                }
+            })
         })
         .then(stuff => {
             onload()//Refresh the list of VMs

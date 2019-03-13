@@ -38,6 +38,19 @@ var port = process.env.PORT || 7000;        // set our port
 // ROUTES FOR OUR API
 // =============================================================================
 
+router.route('/vmUsage/:vm_id')
+    .get((req,res)=>{
+        VmUsage.find((err, vm)=>{
+            if (err){
+                res.json(err)
+            }
+            else{
+                console.log(vm)
+                res.json({ message: vm});
+            }
+        })
+})
+
 //VM Usage
 router.route('/vmUsage/:user_id/:vm_id')
     .post((req, response) => { //Adds a VM Usage event to the DB

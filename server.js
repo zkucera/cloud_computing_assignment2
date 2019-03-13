@@ -249,6 +249,21 @@ router.route('/vmByUser/:user_id') //Used to get vm's by owner id
     })
 })
 
+router.route('/vmUsage/:vm_id')
+    .get((req, res) => {
+        var vmUsage = new VmUsage({});
+
+        fetch(vimUrl + "/" + req.params.vm_id, { //Send the post request
+            method: 'get',
+            mode: "cors",
+            headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : vimUrl},
+            }).then(data => {
+                data.json().then(d => {
+                    res.send(d);
+                })
+            })
+    })
+
 //VM Usage
 router.route('/vmUsage/:user_id/:vm_id')
     .post((req, response) => { //Adds a VM Usage event to the DB
