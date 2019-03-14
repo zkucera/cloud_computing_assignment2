@@ -19,6 +19,59 @@ function updateConfig(){ //When the user selects a config, this updates the rest
     }
 }
 
+function requestTotalUsage(){
+    fetch(byUserUrl + "/" + userID, { //Get the vms of the current user
+        method: 'get',
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' , 'Access-Control-Allow-Origin' : url},
+        }).then(data =>{
+            return data.json()
+        })
+        .then(vms =>{
+            trueTotal = 0
+            userVMs = vms //save their vms
+            if(userVMs[0] != undefined){
+            requestVMUsage(userVMs[0]['_id'])
+            sleep(100).then(() => {
+                trueTotal = trueTotal + parseInt(document.querySelector('.results').innerHTML)
+                sleep(100).then(() => {
+                    if(userVMs[1] != undefined){
+                    requestVMUsage(userVMs[1]['_id'])
+                    sleep(100).then(() => {
+                        trueTotal = trueTotal + parseInt(document.querySelector('.results').innerHTML)
+                        sleep(100).then(() => {
+                            if(userVMs[2] != undefined){
+                            requestVMUsage(userVMs[2]['_id'])
+                            sleep(100).then(() => {
+                                
+                                trueTotal = trueTotal + parseInt(document.querySelector('.results').innerHTML)
+                                sleep(100).then(() => {
+                                    if(userVMs[3] != undefined){
+                                    requestVMUsage(userVMs[3]['_id'])
+                                    }
+                                });
+                            });
+                            }
+                        });
+                    });
+                    }
+                });
+            });
+            }
+            sleep(600).then(() => {
+                document.querySelector('.results').innerHTML = trueTotal
+            });
+        })
+}
+
+sleep(100).then(() => {
+    
+});
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 function requestVM(){ //Called when the user requests a new vm
     var x = document.getElementById("config").value;//Get the selected config
     
@@ -58,7 +111,8 @@ function addVM(vm){ //Adds vm's info to the frontend, gives the user options to 
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Downgrade</button><br><button onclick = "remove('
         + "\'" + vm._id + '\')">Remove</button><br><button onclick = "startVM('
         + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Start</button><button onclick = "stopVM('
-        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Stop</button><br><button onclick = "requestVMUsage(' + "\'" + vm._id + '\')">Request VM Usage</button><br><label id = "status' + vm._id + '" style = "color: red"></label><br><br>';       
+        + "\'" + vm._id + "\',\'" + vm.config.name + '\')">Stop</button><br><button onclick = "requestVMUsage(' 
+        + "\'" + vm._id + '\')">Request VM Usage</button><br><label id = "status' + vm._id + '" style = "color: red"></label><br><br>';       
         document.getElementById('container').appendChild(node);
         
 
@@ -233,12 +287,12 @@ function requestVMUsage(id){
                     if(id == temp['vm']){
                         if(temp['eventType'] == "VM_Starting"){
                             if(num1 == 0){
-                                num1 = temp['timestamp']
+                                num1 = temp['timeStamp']
                                 initType = temp['vmType']
                             }
                         }
                         if(temp['eventType'] == "VM_Stopping"){
-                            num2 = temp['timestamp']
+                            num2 = temp['timeStamp']
                             if(num1 != 0){
                                 if(temp['vmType'] == "Basic"){
                                     total = total + (5*(num2-num1))
@@ -249,12 +303,12 @@ function requestVMUsage(id){
                                 if(temp['vmType'] == "Ultra"){
                                     total = total + (15*(num2-num1))
                                 }
-                                console.log(total)
                                 num1 = 0
+                                
                             }
                         }
                         if(temp['eventType'] == "VM_Scaling"){
-                            num2 = temp['timestamp']
+                            num2 = temp['timeStamp']
                             if(num1 != 0){
                                 if(initType == "Basic"){
                                     total = total + (5*(num2-num1))
@@ -272,6 +326,8 @@ function requestVMUsage(id){
                     }
                     
                 }
+                document.querySelector('.results').innerHTML = total;
+                return(total)
             })
         })
         .then(stuff => {
