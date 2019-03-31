@@ -28,11 +28,11 @@ var configDB = require('./configDB');
 
 var mongoose = require('mongoose')
 
-var address = "127.0.0.1"
+var address = "10.0.0.4"
 
-var vimUrl = 'http://localhost:7000/api/vmUsage';
-
-
+var vimUrl = 'http://localhost:7000/api';
+var mongoURL = "mongodb://10.0.0.7:27017";
+var MongoClient = require('mongodb').MongoClient;
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -350,7 +350,11 @@ app.use('/api',router);
 // START THE SERVER
 // =============================================================================
 //Set up default mongoose connection
-mongoose.connect(configDB.uri, { useNewUrlParser: true });
+//mongoose.connect("10.0.0.7:27017", { useNewUrlParser: true });
+MongoClient.connect(mongoURL, function(err,db){
+if (err) throw err;
+console.log("working");
+});
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
 //Get the default connection
