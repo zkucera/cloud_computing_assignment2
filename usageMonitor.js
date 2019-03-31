@@ -25,15 +25,16 @@ var Vm = require('./models/vm');
 var VmUsage = require('./models/vmUsage');
 var configDB = require('./configDB');
 var mongoose = require('mongoose')
-var address = "127.0.0.1"
+var address = "10.0.0.8"
 
+var MongoClient = require('mongodb').MongoClient;
+var mongoURL = "mongodb://10.0.0.7:27017";
 
-// configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 7000;        // set our port
+var port = process.env.PORT || 10000 ;        // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -91,8 +92,14 @@ app.use('/api',router);
 // START THE SERVER
 // =============================================================================
 //Set up default mongoose connection
-mongoose.connect(configDB.uri, { useNewUrlParser: true });
+//mongoose.connect(configDB.uri, { useNewUrlParser: true });
 // Get Mongoose to use the global promise library
+
+MongoClient.connect(mongoURL, function(err,db){
+if (err) throw err;
+console.log("working");
+db.close();
+});
 mongoose.Promise = global.Promise;
 //Get the default connection
 var db = mongoose.connection;
