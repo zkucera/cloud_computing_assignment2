@@ -12,6 +12,8 @@ var url = require('url')
 var fs = require('fs')
 var cors = require('cors')
 var jwt = require('jsonwebtoken');
+var http = require('http');
+
 app.use(cors());
 
 app.use(function (req, res, next) {
@@ -28,9 +30,9 @@ var configDB = require('./configDB');
 
 var mongoose = require('mongoose')
 
-var address = "10.0.0.4"
+var address = "104.41.141.63";
 
-var vimUrl = 'http://localhost:7000/api';
+var vimUrl = '10.0.0.8:10000';
 var mongoURL = "mongodb://10.0.0.7:27017";
 var MongoClient = require('mongodb').MongoClient;
 // configure app to use bodyParser()
@@ -38,7 +40,11 @@ var MongoClient = require('mongodb').MongoClient;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
 var port = process.env.PORT || 8080;        // set our port
+
+app.set('port', process.env.PORT||8080);
+app.set('host', '10.0.0.4');
 // ROUTES FOR OUR API
 // =============================================================================
 //Route for registering users
@@ -363,5 +369,7 @@ var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.listen(port,address);
+http.createServer(app).listen(app.get('port'),app.get('host'), function(){
+console.log("listening on :" + app.get('host') + app.get('port'));
+});
 console.log('Magic happens on  ' + address + ":" + port);
