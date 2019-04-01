@@ -30,10 +30,10 @@ var configDB = require('./configDB');
 
 var mongoose = require('mongoose')
 
-var address = "104.41.141.63";
+var address = "10.0.0.4";
 
-var vimUrl = '10.0.0.8:10000';
-var mongoURL = "mongodb://10.0.0.7:27017";
+var vimUrl = '10.0.0.7:10000';
+var mongoURL = "mongodb://10.0.0.8:27017";
 var MongoClient = require('mongodb').MongoClient;
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -179,11 +179,14 @@ router.route('/vm')
 })
 
 .get((req, res)=>{ //Returns every VM in the DB
+   console.log("IN GET");
     Vm.find(function(err,vms){
         if (err){
-            res.send(err)
+           console.log("ERROr");
+	     res.send(err)
         }
         else{
+            console.log("no error");
             res.json(vms);
         }
     
@@ -355,12 +358,13 @@ app.use('/api',router);
 
 // START THE SERVER
 // =============================================================================
-//Set up default mongoose connection
-//mongoose.connect("10.0.0.7:27017", { useNewUrlParser: true });
-MongoClient.connect(mongoURL, function(err,db){
-if (err) throw err;
-console.log("working");
-});
+//Set up default mongoose connecti
+mongoose.connect(configDB.uri, { useNewUrlParser: true });
+//MongoClient.connect(mongoURL,{useNewUrlParser: true}, function(err, db){
+//if (err) throw err;
+//console.log("working");
+//});
+
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
 //Get the default connection
@@ -369,7 +373,4 @@ var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-http.createServer(app).listen(app.get('port'),app.get('host'), function(){
-console.log("listening on :" + app.get('host') + app.get('port'));
-});
-console.log('Magic happens on  ' + address + ":" + port);
+app.listen(app.get('port'),app.get('address'));
