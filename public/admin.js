@@ -1,6 +1,6 @@
-var url = 'http://localhost:8080/api/vm'
-var vimUrl = 'http://localhost:8080/api/vmUsage'
-var byUserUrl = 'http://localhost:8080/api/vmByUser'
+var url = 'http://40.76.195.90:8080/api/vm'
+var vimUrl = 'http://40.76.195.90:8080/api/vmUsage'
+var byUserUrl = 'http://40.76.195.90:8080/api/vmByUser'
 
 var userVMs; //The user's vms
 var userID = localStorage.getItem("userID"); //Get the username from the webtoken

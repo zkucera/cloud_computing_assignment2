@@ -1,5 +1,5 @@
   var un,pw
-  var url = 'http://localhost:8080/api/login';
+  var url = 'http://40.76.195.90:8080/api/login';
 
   function onload(){//Called when the page is loaded, if the user has a web token, send them to the landing page
     if (window.localStorage.getItem("userID")){

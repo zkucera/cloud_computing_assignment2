@@ -1,5 +1,5 @@
 var un,pw,pwc
-var url = 'http://localhost:8080/api/register';
+var url = 'http://40.76.195.90:8080/api/register';
 function RegisterSubmit(){
 
   un = document.getElementById("un").value //Get the info entered
