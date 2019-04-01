@@ -25,10 +25,10 @@ var Vm = require('./models/vm');
 var VmUsage = require('./models/vmUsage');
 var configDB = require('./configDB');
 var mongoose = require('mongoose')
-var address = "10.0.0.8"
+var address = "10.0.0.7"
 
 var MongoClient = require('mongodb').MongoClient;
-var mongoURL = "mongodb://10.0.0.7:27017";
+var mongoURL = "mongodb://10.0.0.8:20000";
 
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
